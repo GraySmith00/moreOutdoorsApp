@@ -13,7 +13,16 @@
     
     <hr>
     
+    <% campground.comments.forEach(function(comment) { %>
+        <p><small><%= comment.text %></small></p>
+        <p><small>- <%= comment.author %></small></p>
+    <% }) %>
+    
+    <hr>
+    
     <a href="/campgrounds">All Campgrounds</a>
+    
+    
     
     
 </div>

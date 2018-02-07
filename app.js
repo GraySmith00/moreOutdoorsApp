@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const seedDB = require("./seeds");
 
 mongoose.connect("mongodb://localhost/more_outdoors_app");
 
@@ -18,6 +19,10 @@ app.set('view engine', 'ejs');
 // APP.USE
 // ======================================================
 app.use(bodyParser.urlencoded({extended: true}));
+
+// POPULATING DATA FROM THE SEED FILE
+// ======================================================
+seedDB();
 
 // LANDING PAGE
 // ======================================================
@@ -69,10 +74,11 @@ app.post("/campgrounds", function(req, res) {
 // ======================================================
 app.get("/campgrounds/:id", function(req, res) {
     // Find the campground with the provided ID
-    Campground.findById(req.params.id, function(err, foundCampground) {
+    Campground.findById(req.params.id).populate("comments").exec(function(err, foundCampground) {
         if(err) {
             console.log(err);
         } else {
+            console.log(foundCampground);
             // render show template for that campground
             res.render("show", {campground: foundCampground});
         }
