@@ -20,10 +20,11 @@ app.set('view engine', 'ejs');
 // APP.USE
 // ======================================================
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(__dirname + "/public"));
 
 // POPULATING DATA FROM THE SEED FILE
 // ======================================================
-seedDB();
+// seedDB();
 
 // LANDING PAGE
 // ======================================================
