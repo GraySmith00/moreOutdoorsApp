@@ -6,6 +6,13 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+const methodOverride = require("method-override");
+
+// MONGOOSE SCHEMA CONFIG
+// ======================================================
+const Campground = require('./models/campground');
+const Comment = require('./models/comment');
+const User = require('./models/user');
 
 // ROUTE REQUIREMENTS
 // ======================================================
@@ -17,15 +24,23 @@ const commentRoutes = require("./routes/comments");
 // ======================================================
 mongoose.connect("mongodb://localhost/more_outdoors_app");
 
-// MONGOOSE SCHEMA CONFIG
-// ======================================================
-const Campground = require('./models/campground');
-const Comment = require('./models/comment');
-const User = require('./models/user');
-
 // APP.SET
 // ======================================================
 app.set('view engine', 'ejs');
+
+// APP.USE
+// ======================================================
+// body parser
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(__dirname + "/public"));
+
+// method override
+app.use(methodOverride("_method"));
+
+// POPULATING DATA FROM THE SEED FILE
+// ======================================================
+const seedDB = require("./seeds");
+// seedDB();
 
 // PASSPORT AUTHENTICATION CONFIG
 // ======================================================
@@ -45,38 +60,10 @@ app.use(function(req, res, next) {
    next();
 });
 
-// APP.USE
-// ======================================================
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static(__dirname + "/public"));
-
+// routes
 app.use(indexRoutes);
 app.use("/campgrounds", campgroundRoutes);
 app.use("/campgrounds/:id/comments", commentRoutes);
-
-// POPULATING DATA FROM THE SEED FILE
-// ======================================================
-const seedDB = require("./seeds");
-// seedDB();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

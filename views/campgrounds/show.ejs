@@ -24,6 +24,13 @@
                     <p class="card-text"><%= campground.description %></p>
                     <hr>
                     <p class="card-text text-muted"><em>Created by: <%= campground.author.username %></em></p>
+                    <% if (currentUser && campground.author.id.equals(currentUser._id)) { %>
+                        <hr>
+                        <p class="card-text">
+                            <a href="/campgrounds/<%= campground._id %>/edit" class="btn btn-outline-success btn-sm">Edit</a>
+                        </p>    
+                    <% }; %>
+                      
                 </div>                
             </div>
             
