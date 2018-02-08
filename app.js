@@ -57,7 +57,7 @@ app.use("/campgrounds/:id/comments", commentRoutes);
 // POPULATING DATA FROM THE SEED FILE
 // ======================================================
 const seedDB = require("./seeds");
-// seedDB();
+seedDB();
 
 
 
