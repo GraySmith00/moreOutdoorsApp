@@ -65,24 +65,24 @@ router.get("/:id", function(req, res) {
 
 // CAMGROUNDS EDIT PAGE
 // ======================================================
-router.get("/:id/edit", function(req, res) {
-    // find the campground by ID
+router.get("/:id/edit", checkCampgroundOwnership, function(req, res) {
+    // find campground by ID
     Campground.findById(req.params.id, function(err, foundCampground) {
         if (err) {
             console.log(err);
-            res.redirect("/campgrounds");
+            res.redirect("back");
         } else {
             // pass data and render the edit page
-            res.render("campgrounds/edit", {campground: foundCampground});
+            res.render("campgrounds/edit", {campground: foundCampground}); 
+            console.log(foundCampground);
         }
     });
+    
 });
 
 // CAMGROUNDS UPDATE ACTION
 // ======================================================
-router.put("/:id", function(req, res) {
-    // sanatize incoming data to protect from malicious inputs
-    // req.body.campground = req.sanitize(req.body.campground);
+router.put("/:id", checkCampgroundOwnership,function(req, res) {
     // find and update the correct campground
     Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, updatedCampground) {
         if (err) {
@@ -93,6 +93,19 @@ router.put("/:id", function(req, res) {
         }
     });
 });
+
+// CAMGROUNDS DESTROY ACTION
+// ======================================================
+router.delete("/:id", checkCampgroundOwnership, function(req, res) {
+    // destroy campground
+    Campground.findByIdAndRemove(req.params.id, function(err) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.redirect("/campgrounds");
+        }
+    })
+})
 
 // AUTHENTICATION - isLoggedIn MIDDLEWARE
 // ======================================================
@@ -105,3 +118,27 @@ function isLoggedIn(req, res, next) {
 
 
 module.exports = router;
+
+function checkCampgroundOwnership (req, res, next) {
+    // is the user logged in?
+    if (req.isAuthenticated()) {
+        // find the campground by ID
+        Campground.findById(req.params.id, function(err, foundCampground) {
+            if (err) {
+                console.log(err);
+                res.redirect("back");
+            } else {
+                // does the user own the campground?
+                if(foundCampground.author.id.equals(req.user._id)) {
+                    // congratulations you have passed the test
+                    next();
+                } else {
+                    res.redirect("back");
+                }
+                
+            }
+        });        
+    } else {
+        res.send("You need to be logged in to do that dawg!");
+    }
+}
