@@ -63,6 +63,37 @@ router.get("/:id", function(req, res) {
     });
 });
 
+// CAMGROUNDS EDIT PAGE
+// ======================================================
+router.get("/:id/edit", function(req, res) {
+    // find the campground by ID
+    Campground.findById(req.params.id, function(err, foundCampground) {
+        if (err) {
+            console.log(err);
+            res.redirect("/campgrounds");
+        } else {
+            // pass data and render the edit page
+            res.render("campgrounds/edit", {campground: foundCampground});
+        }
+    });
+});
+
+// CAMGROUNDS UPDATE ACTION
+// ======================================================
+router.put("/:id", function(req, res) {
+    // sanatize incoming data to protect from malicious inputs
+    // req.body.campground = req.sanitize(req.body.campground);
+    // find and update the correct campground
+    Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, updatedCampground) {
+        if (err) {
+            console.log(err);
+            res.redirect("/campgrounds");
+        } else {
+            res.redirect(`/campgrounds/${req.params.id}`);
+        }
+    });
+});
+
 // AUTHENTICATION - isLoggedIn MIDDLEWARE
 // ======================================================
 function isLoggedIn(req, res, next) {
