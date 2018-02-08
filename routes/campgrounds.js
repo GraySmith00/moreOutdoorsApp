@@ -9,38 +9,43 @@ router.get("/", function(req, res) {
     // Get all campgrounds from the DB
     Campground.find({}, function(err, allCampgrounds) {
         if (err) {
-            console.log(err)
+            console.log(err);
         } else {
             res.render("campgrounds/index", {campgrounds: allCampgrounds});
         }
-    })
+    });
     
 });
 
 // CAMGROUNDS NEW PAGE
 // ======================================================
-router.get("/new", function(req, res) {
-    res.render("campgrounds/new")
+router.get("/new", isLoggedIn,function(req, res) {
+    res.render("campgrounds/new");
 });
 
 
 // CAMGROUNDS CREATE ACTION
 // ======================================================
-router.post("/", function(req, res) {
+router.post("/", isLoggedIn,function(req, res) {
     // get data from the form and add to campgrounds array
     const name = req.body.name;
     const image = req.body.image;
     const desc = req.body.description;
-    const newCampground = {name: name, image: image, description: desc};
+    const author = {
+        id: req.user._id,
+        username: req.user.username
+    };
+    const newCampground = {name: name, image: image, description: desc, author: author};
     
     // Create a new campground and save to database
     Campground.create(newCampground, function(err, newlyCreated) {
         if (err) {
             console.log(err);
         } else {
+            console.log(newlyCreated);
             res.redirect("/campgrounds");
         }
-    })
+    });
 });
 
 // CAMGROUNDS SHOW PAGE
@@ -57,6 +62,15 @@ router.get("/:id", function(req, res) {
         }
     });
 });
+
+// AUTHENTICATION - isLoggedIn MIDDLEWARE
+// ======================================================
+function isLoggedIn(req, res, next) {
+    if(req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect("/login");
+}
 
 
 module.exports = router;

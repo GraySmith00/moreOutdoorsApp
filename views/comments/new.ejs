@@ -8,10 +8,8 @@
         <div class="col-md-6 offset-md-3">
             <form action="/campgrounds/<%= campground._id %>/comments" method="POST">
                 <div class="form-group">
-                    <input type="text" name="comment[text]" class="form-control" placeholder="Comment Text">
-                </div>
-                <div class="form-group">
-                    <input type="text" name="comment[author]" class="form-control" placeholder="Author Name">
+                    <!--<input type="text" name="comment[text]" class="form-control" placeholder="Comment Text">-->
+                    <textarea type="text" name="comment[text]" class="form-control" placeholder="Comment"></textarea>
                 </div>
                 <div class="form-group">
                     <button class="btn btn-primary btn-block">Submit</button>

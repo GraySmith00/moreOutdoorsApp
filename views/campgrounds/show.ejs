@@ -22,6 +22,8 @@
                 </div>
                 <div class="card-body">
                     <p class="card-text"><%= campground.description %></p>
+                    <hr>
+                    <p class="card-text text-muted"><em>Created by: <%= campground.author.username %></em></p>
                 </div>                
             </div>
             
@@ -43,7 +45,7 @@
                                             <a href=""><img class="mx-auto rounded-circle img-fluid" src="http://demos.themes.guide/bodeo/assets/images/users/m103.jpg" alt="avatar"></a>
                                         </div>
                                         <div class="comment-content col-md-11 col-sm-10">
-                                            <h6 class="small comment-meta"><a href="#"><%= comment.author %></a> Today, 2:38</h6>
+                                            <h6 class="small comment-meta"><a href="#"><%= comment.author.username %></a> Today, 2:38</h6>
                                             <div class="comment-body">
                                                 <p>
                                                     <%= comment.text %>
