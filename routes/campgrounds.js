@@ -104,8 +104,8 @@ router.delete("/:id", checkCampgroundOwnership, function(req, res) {
         } else {
             res.redirect("/campgrounds");
         }
-    })
-})
+    });
+});
 
 // AUTHENTICATION - isLoggedIn MIDDLEWARE
 // ======================================================

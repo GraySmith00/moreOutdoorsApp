@@ -42,7 +42,7 @@ router.post("/", isLoggedIn, function(req, res) {
                    foundCampground.comments.push(newComment._id);
                    foundCampground.save();
                    // redirect to campground show page
-                   res.redirect(`/campgrounds/${foundCampground._id}`)
+                   res.redirect(`/campgrounds/${foundCampground._id}`);
                }
             });
        }
@@ -51,39 +51,20 @@ router.post("/", isLoggedIn, function(req, res) {
 
 // COMMENT EDIT PAGE
 // ======================================================
-router.get('/:comment_id/edit', function(req, res) {
+router.get('/:comment_id/edit', checkCommentOwnership,function(req, res) {
     
-    // find the campground by id
-    Campground.findById(req.params.id, function(err, foundCampground) {
-        if (err) {
-            console.log(err);
-        } else {
-            // find comment by ID
-            Comment.findById(req.params.comment_id, function(err, foundComment) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    
-                    //res.render("comments/edit", {campground: foundCampground, comment: foundComment});
-                    // does the user own the comment?
-                    if (req.isAuthenticated()) {
-                        if (foundComment.author.id.equals(req.user.id)) {
-                            res.render("comments/edit", {campground: foundCampground, comment: foundComment});
-                        } else {
-                            res.send("bro u cant edit other peoples comments, what u thinkin");
-                        }
-                    } else {
-                        res.send("u gotta be logged in for that one homie");
-                    }
-                }
-            });
-        }
+    Comment.findById(req.params.comment_id, function(err, foundComment) {
+       if (err) {
+           console.log(err);
+       } else {
+           res.render("comments/edit", {campground_id: req.params.id, comment: foundComment});
+       }
     });
 });
 
 // COMMENT UPDATE ACTION
 // ======================================================
-router.put("/:comment_id", function(req, res) {
+router.put("/:comment_id", checkCommentOwnership,function(req, res) {
     Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment) {
         if (err) {
             console.log(err);
@@ -96,33 +77,39 @@ router.put("/:comment_id", function(req, res) {
 
 // COMMENT DESTROY ACTION
 // ======================================================
-
+router.delete("/:comment_id", checkCommentOwnership, function(req, res) {
+    // res.send("bout to delete dat comment boi")
+    Comment.findByIdAndRemove(req.params.comment_id, function(err) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.redirect(`/campgrounds/${req.params.id}`);
+        }
+    });
+});
 
 // CHECK COMMENT OWNERSHIP
 // ======================================================
-// function checkCommentOwnership (req, res, next) {
-//     // is the user logged in?
-//     if (req.isAuthenticated()) {
-//         // find the campground by ID
-//         Campground.findById(req.params.id, function(err, foundCampground) {
-//             if (err) {
-//                 console.log(err);
-//                 res.redirect("back");
-//             } else {
-//                 // does the user own the campground?
-//                 if(foundCampground.author.id.equals(req.user._id)) {
-//                     // congratulations you have passed the test
-//                     next();
-//                 } else {
-//                     res.redirect("back");
-//                 }
-                
-//             }
-//         });        
-//     } else {
-//         res.send("You need to be logged in to do that dawg!");
-//     }
-// }
+function checkCommentOwnership (req, res, next) {
+    // is the user logged in?
+    if (req.isAuthenticated()) {
+        // find the comment
+        Comment.findById(req.params.comment_id, function(err, foundComment) {
+           if (err) {
+               console.log(err);
+           } else {
+               // is the user authorized for this comment?
+               if (foundComment.author.id.equals(req.user.id)) {
+                   next();
+               } else {
+                   res.send("u can't be messin w other people comments my dawg");
+               }
+           }
+        });
+    } else {
+        res.send("you gotta be logged in to do that my dawg");
+    }
+}
 
 // AUTHENTICATION - isLoggedIn MIDDLEWARE
 // ======================================================
@@ -131,7 +118,7 @@ function isLoggedIn(req, res, next) {
         return next();
     }
     res.redirect("/login");
-}; 
+} 
 
 
 module.exports = router;
