@@ -59,6 +59,10 @@
                                                     <br>
                                                     <a href="" class="text-right small"><i class="ion-reply"></i> Reply</a>
                                                 </p>
+                                                <% if (currentUser && comment.author.id.equals(currentUser._id)) { %>
+                                                <p><a href="/campgrounds/<%= campground._id %>/comments/<%= comment._id %>/edit" class="btn btn-outline-success btn-sm">EDIT</a></p>
+                                                <hr>
+                                                <% } %>
                                             </div>
                                         </div>
                                     </div>
