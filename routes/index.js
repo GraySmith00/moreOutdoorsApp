@@ -24,10 +24,12 @@ router.post("/register", function(req, res) {
     User.register(newUser, req.body.password, function(err, user) {
         if (err) {
             console.log(err);
+            req.flash("error", err.message);
             return res.render("registrations/register");
         }
         passport.authenticate("local")(req, res, function() {
-            res.redirect("/campgrounds");
+            req.flash("success", `Welcome aboard partner ${user.username}`);
+            res.redirect("/");
         });
     });
 });
@@ -51,19 +53,11 @@ router.post("/login", passport.authenticate("local", {
 // ======================================================
 router.get("/logout", function(req, res) {
     req.logout();
-    res.redirect("/campgrounds");
+    req.flash("success", "Later Gater!")
+    res.redirect("/");
 })
 
 
-
-// AUTHENTICATION - isLoggedIn MIDDLEWARE
-// ======================================================
-function isLoggedIn(req, res, next) {
-    if(req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect("/login");
-}; 
 
 
 module.exports = router;

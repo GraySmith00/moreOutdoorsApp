@@ -16,21 +16,24 @@ middlewareObj.checkCampgroundOwnership = function checkCampgroundOwnership (req,
         // find the campground by ID
         Campground.findById(req.params.id, function(err, foundCampground) {
             if (err) {
-                console.log(err);
+                req.flash("error", "Couldn't find that campground :/");
                 res.redirect("back");
+                console.log(err);
             } else {
                 // does the user own the campground?
                 if(foundCampground.author.id.equals(req.user._id)) {
                     // congratulations you have passed the test
                     next();
                 } else {
+                    req.flash("error", "You can only edit your own campgrounds dawg.");
                     res.redirect("back");
                 }
                 
             }
         });        
     } else {
-        res.send("You need to be logged in to do that dawg!");
+        req.flash("error", "Gotta to be logged in to do that dawg.");
+        res.redirect("/login");
     }
 };
 
@@ -43,18 +46,22 @@ middlewareObj.checkCommentOwnership = function (req, res, next) {
         // find the comment
         Comment.findById(req.params.comment_id, function(err, foundComment) {
            if (err) {
+               req.flash("error", "Couldn't find that comment :/");
+               res.redirect("back");
                console.log(err);
            } else {
                // is the user authorized for this comment?
                if (foundComment.author.id.equals(req.user.id)) {
                    next();
                } else {
-                   res.send("u can't be messin w other people comments my dawg");
+                    req.flash("error", "You can only edit your own comments dawg.");
+                    res.redirect("back");
                }
            }
         });
     } else {
-        res.send("you gotta be logged in to do that my dawg");
+        req.flash("error", "Gotta to be logged in to do that dawg.");
+        res.redirect("/login");
     }
 };
 
@@ -65,8 +72,9 @@ middlewareObj.isLoggedIn = function (req, res, next) {
     if(req.isAuthenticated()) {
         return next();
     }
+    req.flash("error", "Gotta be logged in to do that dawg.");
     res.redirect("/login");
-}
+};
 
 
 module.exports = middlewareObj;
