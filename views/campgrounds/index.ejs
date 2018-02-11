@@ -27,11 +27,14 @@
         <% }) %>
     </div>
     
-    <hr>
-
     
-    <a href="/campgrounds/new" class="btn btn-primary">Add New Campground</a>
-    <hr>
+
+    <% if (currentUser) { %>
+        <hr>
+        <a href="/campgrounds/new" class="btn btn-primary">Add New Campground</a>
+        <hr>    
+    <% } %>
+
     
     <% include ../partials/footer %>
         
