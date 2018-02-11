@@ -43,7 +43,7 @@ router.get("/login", function(req, res) {
 // AUTHENTICATION - SESSIONS POST ACTION
 // ======================================================
 router.post("/login", passport.authenticate("local", {
-        successRedirect: "/",
+        successRedirect: "/campgrounds",
         failureRedirect: "/login"
     }), function(req, res) {
     //using authenticate() middleware instead of populating this function
