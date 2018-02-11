@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const methodOverride = require("method-override");
+const flash = require("connect-flash");
 
 // MONGOOSE SCHEMA CONFIG
 // ======================================================
@@ -37,6 +38,9 @@ app.use(express.static(__dirname + "/public"));
 // method override
 app.use(methodOverride("_method"));
 
+// connect-flash
+app.use(flash());
+
 // POPULATING DATA FROM THE SEED FILE
 // ======================================================
 const seedDB = require("./seeds");
@@ -55,8 +59,11 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// variables available in all views
 app.use(function(req, res, next) {
    res.locals.currentUser = req.user;
+   res.locals.error = req.flash("error");
+   res.locals.success = req.flash("success");
    next();
 });
 
