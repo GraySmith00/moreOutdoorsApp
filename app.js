@@ -44,7 +44,7 @@ app.use(flash());
 // POPULATING DATA FROM THE SEED FILE
 // ======================================================
 const seedDB = require("./seeds");
-// seedDB();
+//seedDB();
 
 // PASSPORT AUTHENTICATION CONFIG
 // ======================================================
